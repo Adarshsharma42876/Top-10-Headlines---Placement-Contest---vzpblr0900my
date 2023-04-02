@@ -5,12 +5,11 @@ const App = () => {
   const [category, setCategory] = useState("general");
   const [newsData, setNewsData] = useState([]);
   const [loading, setLoading] = useState(false);
-  const apiKey = "554d26dd728d3bb26aa1f861859a1810";
 
   useEffect(() => {
     setLoading(true);
     fetch(
-      `https://gnews.io/api/v4/top-headlines?category=${category}&apikey=${apiKey}&max=10&lang=en`
+      `https://gnews.io/api/v4/top-headlines?category=${category}&apikey=893f98f6bb8a5a60d38404afa9f0dadc&max=10&lang=en`
     )
       .then((res) => res.json())
       .then((data) => {
@@ -18,7 +17,7 @@ const App = () => {
         setLoading(false);
       })
       .catch((err) => console.log(err));
-  }, [category, apiKey]);
+  }, [category]);
 
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
@@ -38,23 +37,17 @@ const App = () => {
       </select>
       {loading && <p className="loader">Loading...</p>}
       {!loading && (
-        <ol>
+        <ol>\
           {newsData.map((news, index) => (
             <li key={index}>
-              {news.image && (
-                <img className="news-img" src={news.image} alt="" />
-              )}
+              <img className="news-img" src={news.image} alt="" />
               <section className="new-title-content-author">
                 <h3 className="news-title">{news.title}</h3>
                 <section className="new-content-author">
-                  {news.description && (
-                    <p className="news-description">{news.description}</p>
-                  )}
-                  {news.source && (
-                    <p className="news-source">
-                      <strong>Source:</strong> {news.source.name}
-                    </p>
-                  )}
+                  <p className="news-description">{news.description}</p>
+                  <p className="news-source">
+                    <strong>Source:</strong> {news.source.name}
+                  </p>
                 </section>
               </section>
             </li>
