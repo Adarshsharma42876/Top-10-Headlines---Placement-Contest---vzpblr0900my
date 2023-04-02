@@ -1,15 +1,33 @@
-import React, { useState, useEffect } from 'react'
-import '../styles/App.css';
+\import React, { useState, useEffect } from "react";
+import "../styles/App.css";
 
 const App = () => {
   const [category, setCategory] = useState("general");
   const [newsData, setNewsData] = useState([]);
-  const [loading, setLoading] = useState();
+  const [loading, setLoading] = useState(false);
+  const apiKey = "554d26dd728d3bb26aa1f861859a1810";
+
+  useEffect(() => {
+    setLoading(true);
+    fetch(
+      `https://gnews.io/api/v4/top-headlines?category=${category}&apikey=${apiKey}&max=10&lang=en`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setNewsData(data.articles);
+        setLoading(false);
+      })
+      .catch((err) => console.log(err));
+  }, [category, apiKey]);
+
+  const handleCategoryChange = (e) => {
+    setCategory(e.target.value);
+  };
 
   return (
     <div id="main">
-      <h1 className='heading'>Top 10 {category} news.</h1>
-      <select value={category}>
+      <h1 className="heading">Top 10 {category} news</h1>
+      <select value={category} onChange={handleCategoryChange}>
         <option value="general">General</option>
         <option value="business">Business</option>
         <option value="sports">Sports</option>
@@ -18,22 +36,33 @@ const App = () => {
         <option value="entertainment">Entertainment</option>
         <option value="science">Science</option>
       </select>
-      <p className='loader'>Loading...</p>
-      <ol>
-        <li key="">
-          <img className='news-img' src="" alt=""/>
-          <section className='new-title-content-author'>
-            <h3 className='news-title'>news title</h3>
-            <section className='new-content-author'>
-              <p className='news-description'>news description</p>
-              <p className='news-source'><strong>Source:</strong> source name</p>
-            </section>
-          </section>
-        </li>
-      </ol>
+      {loading && <p className="loader">Loading...</p>}
+      {!loading && (
+        <ol>
+          {newsData.map((news, index) => (
+            <li key={index}>
+              {news.image && (
+                <img className="news-img" src={news.image} alt="" />
+              )}
+              <section className="new-title-content-author">
+                <h3 className="news-title">{news.title}</h3>
+                <section className="new-content-author">
+                  {news.description && (
+                    <p className="news-description">{news.description}</p>
+                  )}
+                  {news.source && (
+                    <p className="news-source">
+                      <strong>Source:</strong> {news.source.name}
+                    </p>
+                  )}
+                </section>
+              </section>
+            </li>
+          ))}
+        </ol>
+      )}
     </div>
-  )
-}
-
+  );
+};
 
 export default App;
